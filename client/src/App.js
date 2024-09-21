@@ -7,6 +7,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 
+//fake change for git purposes
 // Home component (empty for now)
 const Home = () => {
   return (
