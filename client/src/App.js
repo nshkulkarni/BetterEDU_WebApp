@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './App.css';
+import './App.css'; // Include your CSS file
+import Register from './Register';
 import {
   BrowserRouter as Router,
   Route,
@@ -39,7 +40,7 @@ const Login = () => {
       });
 
       const data = await response.text();
-      
+
       if (response.status === 200) {
         setMessage("Login successful!");
         // Redirect to home page after successful login
@@ -54,29 +55,34 @@ const Login = () => {
   };
 
   return (
-    <div className="App">
-      <h1>Login Page</h1>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+    <div className="login-container">
+      <img src="./brand_images/better_logo.png" alt="Logo" className="login-logo" /> {/* Add your logo here */}
+      <form className="login-form" onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="login-input"
+        />
+        <input
+          type="password"
+          placeholder="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="login-input"
+        />
+        <div className="forgot-password">
+          <a href="/forgot-password">Forgot password?</a>
         </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
+        <button type="submit" className="login-button">Sign in</button>
       </form>
+
+      <div className="register-now">
+        Not a member? <a href="/register">Register Now</a>
+      </div>
 
       {message && <p>{message}</p>}
     </div>
@@ -90,6 +96,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
