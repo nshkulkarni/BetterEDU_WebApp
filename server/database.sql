@@ -24,7 +24,12 @@ CREATE TABLE IF NOT EXISTS groups
 	description VARCHAR
 ); 
 
- 
+ CREATE TABLE IF NOT EXISTS my_groups (
+    uid SERIAL NOT NULL REFERENCES users(uid) ON DELETE CASCADE,
+    gid SERIAL NOT NULL REFERENCES groups(gid) ON DELETE CASCADE,
+    PRIMARY KEY (uid, gid)
+);
+
 
 -- Users joining those groups 
 CREATE TABLE IF NOT EXISTS attended_by 

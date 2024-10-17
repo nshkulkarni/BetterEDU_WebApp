@@ -14,7 +14,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5001/register', {
+      const response = await fetch('http://localhost:5001/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ const Register = () => {
       if (response.status === 200) {
         setMessage("Registration successful! Please log in.");
         // Redirect to login page after successful registration
-        navigate('/');
+        navigate('/home');
       } else {
         setMessage(data); // Show error message from the backend
       }

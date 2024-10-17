@@ -64,5 +64,67 @@ router.post("/login", async (req, res) => {
     }
 });
 
+//Get all Groups
+router.get("/groups", async (req, res) => {
+    try {
+        const allGroups = await pool.query("SELECT * FROM groups");
+        res.json(allGroups.rows);  // Send the list of groups as a response
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+// Get all groups in "my groups" for a specific user
+router.get("/mygroups/:uid", async (req, res) => {
+    try {
+        const { uid } = req.params;
+
+        // Query to get groups associated with the user
+        const userGroups = await pool.query(
+            `SELECT g.* 
+            FROM groups g
+            JOIN attended_by a ON g.gid = a.gid
+            WHERE a.uid = $1`,
+            [uid]
+        );
+
+        if (userGroups.rows.length === 0) {
+            return res.status(404).send("No groups found for this user.");
+        }
+
+        res.json(userGroups.rows);  // Send back the list of groups
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+
+router.post("/mygroups/:uid/:gid", async (req, res) => {
+    try {
+        const { uid, gid } = req.params;
+        // Check if the user already has the group in my groups
+        const existingEntry = await pool.query(
+            "SELECT * FROM my_groups WHERE uid = $1 AND gid = $2", 
+            [uid, gid]
+        );
+
+        if (existingEntry.rows.length !== 0) {
+            return res.status(400).send("Group already added to My Groups");
+        }
+
+        // Insert the new group into "mygroups"
+        const addGroup = await pool.query(
+            "INSERT INTO my_groups (uid, gid) VALUES ($1, $2) RETURNING *",
+            [uid, gid]
+        );
+        res.json(addGroup.rows[0]);  // Send back the newly added group as confirmation
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
 
 module.exports = router;
