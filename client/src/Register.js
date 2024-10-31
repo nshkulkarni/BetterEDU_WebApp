@@ -44,11 +44,13 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <h1>Register</h1>
+      <img src="./brand_images/better_logo.png" alt="Logo" className="register-logo" /> {/* Add your logo here */}
+      <h1>Please enter your information below:</h1>
+      <h2> </h2>
       <form className="register-form" onSubmit={handleRegister}>
         <input
           type="text"
-          placeholder="Username"
+          placeholder="username"
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           required
@@ -56,7 +58,7 @@ const Register = () => {
         />
         <input
           type="email"
-          placeholder="Email"
+          placeholder="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -64,7 +66,7 @@ const Register = () => {
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -72,12 +74,13 @@ const Register = () => {
         />
         <input
           type="number"
-          placeholder="Age"
+          placeholder="age"
           value={age}
           onChange={(e) => setAge(e.target.value)}
           required
           className="register-input"
         />
+        <h2></h2>
         <button type="submit" className="register-button">Register</button>
       </form>
 
