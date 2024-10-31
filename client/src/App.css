@@ -76,6 +76,9 @@ body {
   cursor: pointer;
 }
 
+/* register page */
+
+
 .register-now {
   margin-top: 20px;
 }
@@ -83,4 +86,45 @@ body {
 .register-now a {
   color: #4AC9FF;
   text-decoration: none;
+} 
+
+.register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: white;
+}
+
+.register-input {
+  background-color: #342D5E; /* Darker input fields */
+  color: white;
+  border: none;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.register-logo {
+  width: 250px; /* Increase the width */
+  height: auto; /* Maintain aspect ratio */
+  margin-bottom: 30px;
+}
+
+.register-button {
+  background-color: #4AC9FF;
+  color: #342D5E;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
 }
