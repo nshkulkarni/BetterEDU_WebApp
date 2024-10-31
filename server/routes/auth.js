@@ -67,13 +67,20 @@ router.post("/login", async (req, res) => {
 //Get all Groups
 router.get("/groups", async (req, res) => {
     try {
-        const allGroups = await pool.query("SELECT * FROM groups");
-        res.json(allGroups.rows);  // Send the list of groups as a response
+      const groups = await pool.query("SELECT * FROM groups");
+  
+      // Construct full image URL for each group
+      const groupsWithImages = groups.rows.map(group => ({
+        ...group,
+        group_image: `/brand_images/${group.group_image}`
+      }));
+  
+      res.json(groupsWithImages);
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
+      console.error(err.message);
+      res.status(500).send("Server Error");
     }
-});
+  });
 
 // Get all groups in "my groups" for a specific user
 router.get("/mygroups/:uid", async (req, res) => {
@@ -84,8 +91,9 @@ router.get("/mygroups/:uid", async (req, res) => {
         const userGroups = await pool.query(
             `SELECT g.* 
             FROM groups g
-            JOIN attended_by a ON g.gid = a.gid
-            WHERE a.uid = $1`,
+            JOIN my_groups mg ON g.gid = mg.gid
+            WHERE mg.uid = $1;
+            `,
             [uid]
         );
 
@@ -120,6 +128,27 @@ router.post("/mygroups/:uid/:gid", async (req, res) => {
             [uid, gid]
         );
         res.json(addGroup.rows[0]);  // Send back the newly added group as confirmation
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+// Get user information by UID
+router.get("/user/:uid", async (req, res) => {
+    try {
+        const { uid } = req.params;
+
+        // Query to get the user's information
+        const user = await pool.query("SELECT * FROM users WHERE uid = $1", [uid]);
+
+        // Check if user was found
+        if (user.rows.length === 0) {
+            return res.status(404).send("User not found");
+        }
+
+        // Respond with user information
+        res.json(user.rows[0]);
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");

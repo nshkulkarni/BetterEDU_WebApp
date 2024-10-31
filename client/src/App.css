@@ -84,3 +84,136 @@ body {
   color: #4AC9FF;
   text-decoration: none;
 }
+
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  background-color: #282c34;
+  padding: 1em;
+}
+
+.navbar a {
+  color: #61dafb;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+/* Basic styles for individual pages */
+.user-profile, .groups, .my-groups, .resources {
+  padding: 20px;
+  color: #61dafb;
+}
+
+h2 {
+  color: #61dafb;
+}
+
+
+/* Profile container styling */
+.profile-container {
+  background-color: #1a1a40;
+  color: #d4d4f5;
+  padding: 40px;
+  max-width: 500px;
+  margin: auto;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Avatar styling */
+.profile-avatar {
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ccc; /* Placeholder for user image */
+}
+
+/* Profile info styling */
+.profile-info {
+  text-align: left;
+}
+
+.profile-info h3 {
+  color: #61dafb;
+}
+
+.profile-info p {
+  color: #c3c3e8;
+  margin: 10px 0;
+}
+
+.profile-info strong {
+  color: #61dafb;
+}
+
+/* Sign out button styling */
+.sign-out-button {
+  background-color: #282c34;
+  color: #61dafb;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.sign-out-button:hover {
+  background-color: #3c3f50;
+}
+
+/* App.css */
+
+/* Styling for the Groups page */
+.groups-page {
+  padding: 20px;
+  color: #61dafb;
+}
+
+.groups-page h2 {
+  text-align: center;
+  color: #61dafb;
+  margin-bottom: 20px;
+}
+
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+.group-card {
+  background-color: #1a1a40;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  max-width: 200px;
+  transition: transform 0.2s;
+}
+
+.group-card:hover {
+  transform: scale(1.05);
+}
+
+.group-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.group-name {
+  color: #d4d4f5;
+  font-size: 16px;
+  font-weight: bold;
+}

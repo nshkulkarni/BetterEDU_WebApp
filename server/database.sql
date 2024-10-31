@@ -17,12 +17,15 @@ CREATE TABLE IF NOT EXISTS users
 -- attribute group_id, name, date_times array  
 CREATE TABLE IF NOT EXISTS groups
 (
-	gid SERIAL NOT NULL PRIMARY KEY, 
-	group_name VARCHAR NOT NULL, 
-	dates_times VARCHAR NOT NULL, 
-	group_image BYTEA, 
-	description VARCHAR
-); 
+    gid SERIAL PRIMARY KEY, 
+    group_name VARCHAR NOT NULL, 
+    date VARCHAR(255),
+    time VARCHAR(255),
+    group_image VARCHAR(255), 
+    description VARCHAR,
+    leader VARCHAR(255)
+);
+
 
  CREATE TABLE IF NOT EXISTS my_groups (
     uid SERIAL NOT NULL REFERENCES users(uid) ON DELETE CASCADE,
