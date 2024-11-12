@@ -150,6 +150,28 @@ router.post("/mygroups/:uid/:gid", async (req, res) => {
     }
 });
 
+// Delete a group from mygroups
+router.delete("/mygroups/:uid/:gid", async (req, res) => {
+    try {
+        const { uid, gid } = req.params;
+        
+        // Delete the group from "mygroups"
+        const deleteGroup = await pool.query(
+            "DELETE FROM my_groups WHERE uid = $1 AND gid = $2 RETURNING *",
+            [uid, gid]
+        );
+
+        if (deleteGroup.rows.length === 0) {
+            return res.status(404).send("Group not found in My Groups.");
+        }
+
+        res.json({ message: "Group successfully removed from My Groups" });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
 // Get a single group by ID
 router.get("/groups/:gid", async (req, res) => {
     try {

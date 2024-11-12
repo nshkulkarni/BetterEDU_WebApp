@@ -1,7 +1,7 @@
 // App.js
 import React, { useState, useEffect } from 'react';
 import './App.css'; // Include your CSS file
-import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { UserProvider, useUser } from './UserContext'; // Import UserProvider and useUser
 
 
@@ -191,7 +191,7 @@ const UserProfile = () => {
     <div className="profile-container">
       <h2>Profile</h2>
       <div className="profile-avatar">
-        <img src="./default-avatar.png" alt="Avatar" className="profile-image" />
+        <img src="../public/brand_images/AG.png" className="profile-image" />
       </div>
       <div className="profile-info">
         <h3>{user.user_name || 'Guest'}</h3>
@@ -226,7 +226,7 @@ const Groups = () => {
       <h2>Groups</h2>
       <div className="groups-grid">
         {groups.map((group) => (
-          <Link to={`/groups/${group.gid}`} key={group.gid} className="group-card">
+          <Link to={`/groups/${group.gid}`} key={group.gid} className="group-card" state={{ fromGroupsPage: true }}>
             <img
               src={group.group_image}
               alt={group.group_name}
@@ -244,9 +244,11 @@ const Groups = () => {
 
 // GroupDetail component
 const GroupDetail = () => {
-  const { gid } = useParams(); // Get the group ID from the URL
+  const { gid } = useParams(); 
   const [group, setGroup] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchGroup = async () => {
@@ -261,6 +263,40 @@ const GroupDetail = () => {
 
     fetchGroup();
   }, [gid]);
+
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}/${gid}`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        alert(`Successfully signed up for ${group.group_name}`);
+        navigate('/mygroups');
+      } else {
+        alert("Failed to sign up for the group");
+      }
+    } catch (error) {
+      console.error("Error signing up for group:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}/${gid}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert(`Successfully removed ${group.group_name} from My Groups`);
+        navigate('/mygroups');
+      } else {
+        alert("Failed to delete the group from My Groups");
+      }
+    } catch (error) {
+      console.error("Error deleting group from My Groups:", error);
+    }
+  };
 
   if (!group) {
     return <p>Loading...</p>;
@@ -278,7 +314,20 @@ const GroupDetail = () => {
           <p><strong>Description:</strong> {group.description}</p>
         </div>
       </div>
-      <button className="join-button">Join {group.group_name}</button>
+      
+      {/* Conditionally render buttons */}
+      {location.state?.fromGroupsPage ? (
+        <button onClick={handleSignUp} className="join-button">
+          Sign up for {group.group_name}
+        </button>
+      ) : (
+        <>
+          <button className="join-button">Join {group.group_name}</button>
+          <button onClick={handleDelete} className="delete-button">
+            Delete {group.group_name}
+          </button>
+        </>
+      )}
     </div>
   );
 };
