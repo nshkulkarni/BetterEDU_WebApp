@@ -41,28 +41,38 @@ router.post("/login", async (req, res) => {
         const { email_address, pw } = req.body;
 
         // Check if user exists
-        const user = await pool.query("SELECT * FROM users WHERE email_address = $1", [
-            email_address
-        ]);
+        const userResult = await pool.query("SELECT * FROM users WHERE email_address = $1", [email_address]);
 
-        if (user.rows.length === 0) {
+        if (userResult.rows.length === 0) {
             return res.status(401).send("Invalid Email or Password");
         }
 
+        const user = userResult.rows[0]; // Get the user data from the query result
+
         // Compare the hashed password with the provided one
-        const validPassword = await bcrypt.compare(pw, user.rows[0].pw);
+        const validPassword = await bcrypt.compare(pw, user.pw);
 
         if (!validPassword) {
             return res.status(401).send("Invalid Email or Password");
         }
 
-        res.status(200).send("Login successful!");
+        // Destructure the necessary fields from the user data
+        const { uid, user_name } = user;
+
+        // Send user data upon successful login
+        res.status(200).json({
+            uid,
+            user_name,
+            email_address: user.email_address,
+            message: "Login successful!"
+        });
 
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");
     }
 });
+
 
 //Get all Groups
 router.get("/groups", async (req, res) => {
@@ -101,7 +111,13 @@ router.get("/mygroups/:uid", async (req, res) => {
             return res.status(404).send("No groups found for this user.");
         }
 
-        res.json(userGroups.rows);  // Send back the list of groups
+        // Add the image path prefix to each group's image URL
+        const groupsWithImages = userGroups.rows.map(group => ({
+            ...group,
+            group_image: `/brand_images/${group.group_image}`
+        }));
+
+        res.json(groupsWithImages);  // Send back the list of groups with updated image paths
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");
@@ -128,6 +144,32 @@ router.post("/mygroups/:uid/:gid", async (req, res) => {
             [uid, gid]
         );
         res.json(addGroup.rows[0]);  // Send back the newly added group as confirmation
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+// Get a single group by ID
+router.get("/groups/:gid", async (req, res) => {
+    try {
+        const { gid } = req.params;
+
+        // Query to get the group by its ID
+        const group = await pool.query("SELECT * FROM groups WHERE gid = $1", [gid]);
+
+        // Check if the group was found
+        if (group.rows.length === 0) {
+            return res.status(404).send("Group not found");
+        }
+
+        // Construct full image URL for the group
+        const groupWithImage = {
+            ...group.rows[0],
+            group_image: `/brand_images/${group.rows[0].group_image}`
+        };
+
+        res.json(groupWithImage); // Respond with the group's details
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server Error");

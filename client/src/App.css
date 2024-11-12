@@ -221,6 +221,87 @@ h2 {
   font-weight: bold;
 }
 
+/* Group Detail Page Adjustments */
+.group-detail-page {
+  max-width: 800px; /* Set a max width for the group detail container */
+  margin: auto;
+  padding: 20px;
+  color: #D4E4FF; /* Light blue color for text */
+  text-align: center;
+  position: relative;
+}
+
+/* Back Button Styling */
+.back-button {
+  background: none;
+  border: none;
+  color: #D4E4FF;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+/* Group Title Styling */
+.group-title {
+  font-size: 2rem;
+  color: #4AC9FF; /* Light blue color */
+  margin-bottom: 20px;
+}
+
+/* Group Content Styling */
+.group-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Group Image Styling */
+.group-detail-image {
+  width: 100%; /* Make the image responsive to the container */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 600px; /* Restrict max width for responsive layout */
+  max-height: 400px; /* Optional: Set a maximum height for the image */
+  border-radius: 8px; /* Optional: Add some border radius for rounded corners */
+  object-fit: cover; /* Ensures the image covers the specified height and width without distortion */
+  margin-bottom: 20px;
+}
+
+/* Group Information Styling */
+.group-info {
+  text-align: left;
+  max-width: 600px;
+  margin: auto;
+  color: #B0C5E8; /* Light grey-blue for the info text */
+}
+
+.group-info p {
+  margin: 10px 0;
+}
+
+.group-info strong {
+  color: #4AC9FF; /* Light blue color */
+}
+
+/* Join Button Styling */
+.join-button {
+  background-color: #282C34;
+  color: #D4E4FF;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.join-button:hover {
+  background-color: #3A4A63;
+}
+
+
 .register-container {
   display: flex;
   flex-direction: column;

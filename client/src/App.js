@@ -2,15 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'; // Include your CSS file
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams } from 'react-router-dom';
+import { UserProvider, useUser } from './UserContext'; // Import UserProvider and useUser
 
-// Home component
-const Home = () => {
-  return (
-    <div>
-      <h1>Welcome to the Home Page!</h1>
-    </div>
-  );
-};
 
 // Login component
 const Login = () => {
@@ -18,10 +11,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useUser(); // Get setUser function from context
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("password", password);
     try {
       const response = await fetch('http://localhost:5001/auth/login', {
         method: 'POST',
@@ -34,13 +27,15 @@ const Login = () => {
         }),
       });
 
-      const data = await response.text();
+      const data = await response.json();
 
       if (response.status === 200) {
+        console.log("User data received from server:", data);
+        setUser(data); // Save user data in context
         setMessage("Login successful!");
-        navigate('/home'); // Redirect to home page after successful login
+        navigate('/user'); // Redirect after successful login
       } else {
-        setMessage(data);  // Show error message from the backend
+        setMessage(data); // Show error message from the backend
       }
     } catch (err) {
       setMessage("Server error");
@@ -67,9 +62,6 @@ const Login = () => {
           required
           className="login-input"
         />
-        <div className="forgot-password">
-          <a href="/forgot-password">Forgot password?</a>
-        </div>
         <button type="submit" className="login-button">Sign in</button>
       </form>
 
@@ -111,8 +103,8 @@ const Register = () => {
       const data = await response.text();
 
       if (response.status === 200) {
-        setMessage("Registration successful! Please log in.");
-        navigate('/home');
+        setMessage("Registration successful!");
+        navigate('/user');
       } else {
         setMessage(data); // Show error message from the backend
       }
@@ -166,40 +158,33 @@ const Register = () => {
 };
 
 // UserProfile component
-// UserProfile component
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
+  const { user } = useUser(); // Use user data from context
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Use useNavigate for redirection
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!user || !user.uid) return; // Exit if user is not defined
       try {
-        const response = await fetch('http://localhost:5001/auth/user/1'); // Replace '1' with dynamic user ID if available
+        const response = await fetch(`http://localhost:5001/auth/user/${user.uid}`);
         if (!response.ok) {
           throw new Error('Failed to fetch user data');
         }
-        const data = await response.json();
-        setUser(data);
       } catch (err) {
         setError(err.message);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [user]);
 
-  const handleSignOut = () => {
-    // Optional: Clear session or token here if applicable
-    navigate('/'); // Redirect to the login page
-  };
+  if (!user) {
+    return <p>Please log in to view your profile.</p>;
+  }
 
   if (error) {
     return <p>Error: {error}</p>;
-  }
-
-  if (!user) {
-    return <p>Loading...</p>;
   }
 
   return (
@@ -210,11 +195,9 @@ const UserProfile = () => {
       </div>
       <div className="profile-info">
         <h3>{user.user_name || 'Guest'}</h3>
-        <p><strong>Bio:</strong> {user.bio || 'Hi there!'}</p>
         <p><strong>Email:</strong> {user.email_address || 'No email'}</p>
-        <p><strong>Groups Signed Up:</strong> {user.groups ? user.groups.join(', ') : 'Sign in to add groups'}</p>
       </div>
-      <button className="sign-out-button" onClick={handleSignOut}>Sign Out</button>
+      <button className="sign-out-button" onClick={() => navigate('/')}>Sign Out</button>
     </div>
   );
 };
@@ -303,10 +286,48 @@ const GroupDetail = () => {
 
 // MyGroups component
 const MyGroups = () => {
+  const { user } = useUser(); // Access user from context
+  const [myGroups, setMyGroups] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!user || !user.uid) return;
+
+    const fetchMyGroups = async () => {
+      try {
+        const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}`);
+        if (response.status === 404) {
+          setMyGroups([]);
+          setError("No groups found for this user.");
+          return;
+        }
+        const data = await response.json();
+        setMyGroups(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchMyGroups();
+  }, [user]);
+
+  if (!user) return <p>Please log in to view your groups.</p>;
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
   return (
-    <div className="my-groups">
+    <div className="groups-page">
       <h2>My Groups</h2>
-      <p>Here is where your signed-up groups will be listed.</p>
+      <div className="groups-grid">
+        {myGroups.map((group) => (
+          <Link to={`/groups/${group.gid}`} key={group.gid} className="group-card">
+            <img src={group.group_image} alt={group.group_name} className="group-image" />
+            <p className="group-name">{group.group_name}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };
@@ -325,7 +346,6 @@ const Resources = () => {
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <Link to="/home">Home</Link>
       <Link to="/user">Profile</Link>
       <Link to="/mygroups">My Groups</Link>
       <Link to="/groups">Groups</Link>
@@ -337,19 +357,20 @@ const Navbar = () => {
 // Main App component with routing
 function App() {
   return (
-    <Router>
-      <Navbar /> {/* Add the Navbar component here */}
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/user" element={<UserProfile />} />
-        <Route path="/groups" element={<Groups />} />
-        <Route path="/groups/:gid" element={<GroupDetail />} />
-        <Route path="/mygroups" element={<MyGroups />} />
-        <Route path="/resources" element={<Resources />} />
-      </Routes>
-    </Router>
+    <UserProvider>
+      <Router>
+        <Navbar /> {/* Add the Navbar component here */}
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/user" element={<UserProfile />} />
+          <Route path="/groups" element={<Groups />} />
+          <Route path="/groups/:gid" element={<GroupDetail />} />
+          <Route path="/mygroups" element={<MyGroups />} />
+          <Route path="/resources" element={<Resources />} />
+        </Routes>
+      </Router>
+    </UserProvider>
   );
 }
 
