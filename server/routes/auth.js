@@ -219,5 +219,33 @@ router.get("/user/:uid", async (req, res) => {
     }
 });
 
+// In your backend router file
+router.get("/resources", async (req, res) => {
+    try {
+        const resources = await pool.query("SELECT * FROM resources");
+        res.json(resources.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+// Endpoint to handle contact form submissions
+router.post('/contact', async (req, res) => {
+    const { name, email, subject, message } = req.body;
+  
+    try {
+      // Insert the contact form submission into the contacts table
+      const result = await pool.query(
+        `INSERT INTO contacts (name, email, subject, message) VALUES ($1, $2, $3, $4) RETURNING *`,
+        [name, email, subject, message]
+      );
+  
+      res.status(201).json({ message: 'Message saved successfully!', data: result.rows[0] });
+    } catch (error) {
+      console.error('Error saving contact form message:', error);
+      res.status(500).json({ message: 'Failed to save message.' });
+    }
+  });
 
 module.exports = router;

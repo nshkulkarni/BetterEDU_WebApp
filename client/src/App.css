@@ -357,3 +357,95 @@ h2 {
   cursor: pointer;
   font-size: 16px;
 }
+
+.resources {
+  padding: 20px;
+}
+
+.resources h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 40px;
+}
+
+.resource-card {
+  padding: 15px;
+  border-radius: 8px;
+  color: #89cff0;
+  text-align: left;
+}
+
+.resource-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #89cff0;
+}
+
+.resource-card p {
+  margin: 0;
+  color: #89cff0;
+}
+
+.resource-card a {
+  color: #89cff0;
+  text-decoration: none;
+  text-wrap: pretty;
+}
+
+.resource-card a:hover {
+  text-decoration: underline;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #1a2a6c;
+  border-radius: 8px;
+  color: #89cff0;
+}
+
+.contact-form h2 {
+  text-align: center;
+  color: #89cff0;
+}
+
+.contact-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form input,
+.contact-form textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contact-form button {
+  padding: 10px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.contact-form button:hover {
+  background-color: #357ab8;
+}
+
+.contact-form p {
+  text-align: center;
+  color: #89cff0;
+  margin-top: 10px;
+}
