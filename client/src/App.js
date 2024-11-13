@@ -104,7 +104,7 @@ const Register = () => {
 
       if (response.status === 200) {
         setMessage("Registration successful!");
-        navigate('/user');
+        navigate('/');
       } else {
         setMessage(data); // Show error message from the backend
       }
@@ -160,23 +160,31 @@ const Register = () => {
 // UserProfile component
 const UserProfile = () => {
   const { user } = useUser(); // Use user data from context
+  const [userGroups, setUserGroups] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserGroups = async () => {
       if (!user || !user.uid) return; // Exit if user is not defined
       try {
-        const response = await fetch(`http://localhost:5001/auth/user/${user.uid}`);
+        const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          if (response.status === 404) {
+            setUserGroups([]); // Set empty if no groups found
+          } else {
+            throw new Error('Failed to fetch user groups');
+          }
+        } else {
+          const data = await response.json();
+          setUserGroups(data);
         }
       } catch (err) {
         setError(err.message);
       }
     };
 
-    fetchUserData();
+    fetchUserGroups();
   }, [user]);
 
   if (!user) {
@@ -191,16 +199,25 @@ const UserProfile = () => {
     <div className="profile-container">
       <h2>Profile</h2>
       <div className="profile-avatar">
-        <img src="../public/brand_images/AG.png" className="profile-image" />
+        <img src="/brand_images/AG.png" className="profile-image" />
       </div>
       <div className="profile-info">
         <h3>{user.user_name || 'Guest'}</h3>
         <p><strong>Email:</strong> {user.email_address || 'No email'}</p>
       </div>
+      <div className="user-groups" >
+        <strong style={{ marginRight: '5px', marginLeft: '-15px'}}>Groups signed up for:</strong>
+        <span>
+          {userGroups.length > 0 
+            ? userGroups.map(group => group.group_name).join(', ') 
+            : 'You haven\'t signed up for any groups yet.'}
+        </span>
+      </div>
       <button className="sign-out-button" onClick={() => navigate('/')}>Sign Out</button>
     </div>
   );
 };
+
 
 
 // Groups component
@@ -383,10 +400,106 @@ const MyGroups = () => {
 
 // Resources component
 const Resources = () => {
+  const [resources, setResources] = useState([]);
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/auth/resources');
+        const data = await response.json();
+        setResources(data);
+      } catch (error) {
+        console.error("Error fetching resources:", error);
+      }
+    };
+
+    fetchResources();
+  }, []);
+
   return (
     <div className="resources">
       <h2>Resources</h2>
-      <p>Find helpful resources here.</p>
+      <div className="resources-grid">
+        {resources.map((resource) => (
+          <div key={resource.id} className="resource-card">
+            <h3>{resource.title}</h3>
+            {resource.phone_number && <p>{resource.phone_number}</p>}
+            {resource.website && <p><a href={resource.website} target="_blank" rel="noopener noreferrer">{resource.website}</a></p>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ContactForm = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = { name, email, subject, message };
+
+    try {
+      const response = await fetch('http://localhost:5001/auth/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setStatus('Message sent successfully!');
+        setName('');
+        setEmail('');
+        setSubject('');
+        setMessage('');
+      } else {
+        setStatus('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setStatus('An error occurred. Please try again.');
+    }
+  };
+
+  return (
+    <div className="contact-form">
+      <h2>Contact Us</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          required
+        />
+        <button type="submit">Send Message</button>
+      </form>
+      {status && <p>{status}</p>}
     </div>
   );
 };
@@ -399,6 +512,7 @@ const Navbar = () => {
       <Link to="/mygroups">My Groups</Link>
       <Link to="/groups">Groups</Link>
       <Link to="/resources">Resources</Link>
+      <Link to="/contact">Contact Us</Link>
     </nav>
   );
 };
@@ -417,6 +531,7 @@ function App() {
           <Route path="/groups/:gid" element={<GroupDetail />} />
           <Route path="/mygroups" element={<MyGroups />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/contact" element={<ContactForm />} />
         </Routes>
       </Router>
     </UserProvider>

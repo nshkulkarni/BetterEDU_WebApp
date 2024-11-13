@@ -49,3 +49,11 @@ CREATE TABLE IF NOT EXISTS lead_by
 	gid SERIAL NOT NULL REFERENCES groups(gid) ON DELETE CASCADE, 
 	PRIMARY KEY (uid, gid)
 );  
+
+CREATE TABLE contacts (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL
+);
