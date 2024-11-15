@@ -1,9 +1,9 @@
 // App.js
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Include your CSS file
+import './App.css'; 
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams, useLocation } from 'react-router-dom';
-import { UserProvider, useUser } from './UserContext'; // Import UserProvider and useUser
-
+import { UserProvider, useUser } from './UserContext'; 
+import VideoChat from './VideoChat';
 
 // Login component
 const Login = () => {
@@ -338,8 +338,13 @@ const GroupDetail = () => {
           Sign up for {group.group_name}
         </button>
       ) : (
-        <>
-          <button className="join-button">Join {group.group_name}</button>
+          <>
+            <button
+              onClick={() => navigate(`/videochat/${group.group_name.replace(/\s+/g, '-')}`)}
+              className="join-button"
+            >
+              Join {group.group_name}
+            </button>
           <button onClick={handleDelete} className="delete-button">
             Delete {group.group_name}
           </button>
@@ -532,6 +537,7 @@ function App() {
           <Route path="/mygroups" element={<MyGroups />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/contact" element={<ContactForm />} />
+          <Route path="/videochat/:channelName" element={<VideoChat />} />
         </Routes>
       </Router>
     </UserProvider>
