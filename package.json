@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "agora-rtc-sdk-ng": "^4.22.2",
     "bcrypt": "^5.1.1"
   }
 }
