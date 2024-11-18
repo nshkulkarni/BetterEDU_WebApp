@@ -10,8 +10,9 @@ const allowedOrigins = [
   "https://better-edu-web-app-new.vercel.app/", // Replace with your deployed frontend URL
 ];
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true, // Allow cookies if needed
 }));
 
 // Health check
