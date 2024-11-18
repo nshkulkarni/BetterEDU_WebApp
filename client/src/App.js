@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams, u
 import { UserProvider, useUser } from './UserContext'; 
 import VideoChat from './VideoChat';
 
+const API_BASE_URL = "https://betteredu-webapp-test.onrender.com";
+
 // Login component
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +18,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5001/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +89,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5001/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,7 +170,7 @@ const UserProfile = () => {
     const fetchUserGroups = async () => {
       if (!user || !user.uid) return; // Exit if user is not defined
       try {
-        const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}`);
+        const response = await fetch(`${API_BASE_URL}/auth/mygroups/${user.uid}`);
         if (!response.ok) {
           if (response.status === 404) {
             setUserGroups([]); // Set empty if no groups found
@@ -227,7 +229,7 @@ const Groups = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await fetch('http://localhost:5001/auth/groups');
+        const response = await fetch(`${API_BASE_URL}/auth/groups`);
         const data = await response.json();
         setGroups(data);
       } catch (error) {
@@ -270,7 +272,7 @@ const GroupDetail = () => {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/auth/groups/${gid}`);
+        const response = await fetch(`${API_BASE_URL}/auth/groups/${gid}`);
         const data = await response.json();
         setGroup(data);
       } catch (error) {
@@ -283,7 +285,7 @@ const GroupDetail = () => {
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}/${gid}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mygroups/${user.uid}/${gid}`, {
         method: 'POST',
       });
 
@@ -300,7 +302,7 @@ const GroupDetail = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}/${gid}`, {
+      const response = await fetch(`${API_BASE_URL}/auth/mygroups/${user.uid}/${gid}`, {
         method: 'DELETE',
       });
 
@@ -366,7 +368,7 @@ const MyGroups = () => {
 
     const fetchMyGroups = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/auth/mygroups/${user.uid}`);
+        const response = await fetch(`${API_BASE_URL}/auth/mygroups/${user.uid}`);
         if (response.status === 404) {
           setMyGroups([]);
           setError("No groups found for this user.");
@@ -410,7 +412,7 @@ const Resources = () => {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const response = await fetch('http://localhost:5001/auth/resources');
+        const response = await fetch(`${API_BASE_URL}/auth/resources`);
         const data = await response.json();
         setResources(data);
       } catch (error) {
@@ -450,7 +452,7 @@ const ContactForm = () => {
     const formData = { name, email, subject, message };
 
     try {
-      const response = await fetch('http://localhost:5001/auth/contact', {
+      const response = await fetch(`${API_BASE_URL}/auth/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
