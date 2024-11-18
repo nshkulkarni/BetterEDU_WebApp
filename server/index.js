@@ -7,7 +7,8 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
     "http://localhost:3000", // Local development
-    "https://better-edu-web-app-new.vercel.app", // Deployed frontend
+    "https://better-edu-web-app-new.vercel.app",
+    "https://bettereduweb.com", // Deployed frontend
 ];
 
 app.use(cors({

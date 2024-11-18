@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams, u
 import { UserProvider, useUser } from './UserContext'; 
 import VideoChat from './VideoChat';
 
-const API_BASE_URL = "https://betteredu-webapp-test.onrender.com";
+const API_BASE_URL = "https://api.bettereduweb.com";
 
 // Login component
 const Login = () => {
