@@ -6,14 +6,22 @@ const app = express();
 // Middleware
 app.use(express.json());
 const allowedOrigins = [
-  "http://localhost:3000", // Allow localhost for development
-  "https://better-edu-web-app-new.vercel.app/", // Replace with your deployed frontend URL
+    "http://localhost:3000", // Local development
+    "https://better-edu-web-app-new.vercel.app", // Deployed frontend
 ];
+
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true); // Allow requests from valid origins
+        } else {
+            callback(new Error("Not allowed by CORS")); // Deny other origins
+        }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true, // Allow cookies if needed
 }));
+
 
 // Health check
 app.get("/", (req, res) => {
