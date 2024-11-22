@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; 
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { UserProvider, useUser } from './UserContext'; 
-import VideoChat from './VideoChat';
+import VideoCall from './VideoChat';
 
 // Login component
 const Login = () => {
@@ -524,21 +524,46 @@ const Navbar = () => {
 
 // Main App component with routing
 function App() {
+  const [inCall, setInCall] = useState(false);
   return (
     <UserProvider>
       <Router>
-        <Navbar /> {/* Add the Navbar component here */}
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/user" element={<UserProfile />} />
-          <Route path="/groups" element={<Groups />} />
-          <Route path="/groups/:gid" element={<GroupDetail />} />
-          <Route path="/mygroups" element={<MyGroups />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/contact" element={<ContactForm />} />
-          <Route path="/videochat/:channelName" element={<VideoChat />} />
-        </Routes>
+        {inCall ? (
+          // Render VideoCall if inCall is true
+          <div
+            className="App"
+            style={{
+              height: "100vh",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              paddingTop: "10vh",
+              background: "#28489d",
+            }}
+          >
+            <VideoCall setInCall={setInCall} />
+          </div>
+        ) : (
+          // Render the rest of the app if not in a call
+          <>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/user" element={<UserProfile />} />
+              <Route path="/groups" element={<Groups />} />
+              <Route path="/groups/:gid" element={<GroupDetail />} />
+              <Route path="/mygroups" element={<MyGroups />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/contact" element={<ContactForm />} />
+              <Route
+                path="/videochat/:channelName"
+                element={<VideoCall setInCall={setInCall} />}
+              />
+            </Routes>
+          </>
+        )}
       </Router>
     </UserProvider>
   );

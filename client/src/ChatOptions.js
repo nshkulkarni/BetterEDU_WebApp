@@ -1,6 +1,6 @@
 import {useState} from "react"
 import {useClient} from "./configuration"
-import {Grid,Button} from"@material-ui/core"
+import {Grid,Button} from"@mui/material"
 import MicIcon from "@mui/icons-material/Mic"
 import MicOffIcon from "@mui/icons-material/MicOff"
 import VideocamIcon from "@mui/icons-material/Videocam"
