@@ -512,10 +512,14 @@ const ContactForm = () => {
 };
 
 // Navbar component
-const Navbar = () => {
+const Navbar = ({isInCall, leaveCall}) => {
+
+
+
   return (
+    
     <nav className="navbar">
-      <Link to="/user">Profile</Link>
+      <Link to="/user"> Profile</Link>
       <Link to="/mygroups">My Groups</Link>
       <Link to="/groups">Groups</Link>
       <Link to="/resources">Resources</Link>
@@ -539,7 +543,7 @@ function App() {
           <Route path="/mygroups" element={<MyGroups />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/contact" element={<ContactForm />} />
-          <Route path="/videochat/:channelName" element={<VideoChat />} />
+          <Route path="/videochat/:streamName" element={<VideoChat />} />
         </Routes>
       </Router>
     </UserProvider>
