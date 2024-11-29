@@ -43,7 +43,6 @@ export default function Controls(props)
         tracks[0].close() 
         tracks[1].close()
         client.removeAllListeners() 
-        setInCall(false)
         setStart(false)
     };
 

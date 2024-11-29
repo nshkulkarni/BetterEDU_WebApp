@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@material-ui/core";
-import VideoCall from "./VideoChat";
+import VideoCall from "../VideoChat";
 
 function App() {
   const [inCall, setCall] = useState(false);
@@ -19,7 +19,7 @@ function App() {
       }}
     >
       {inCall ? (
-        <VideoCall setInCall={setCall} />
+        <VideoChat setInCall={setCall} />
       ) : (
         <Button
           variant="contained"
